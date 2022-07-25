@@ -6,14 +6,14 @@ export class EventEmitter<T = unknown> {
 
   constructor(...eventNames: string[]) {
     this.#eventNames = eventNames
+
+    for (const eventName of eventNames) {
+      this.#listeners.set(eventName, new Set())
+    }
   }
 
   on(event: string, listener: Listener<T>) {
     if (event in this.#eventNames) return this
-
-    if (!this.#listeners.has(event)) {
-      this.#listeners.set(event, new Set([listener]))
-    }
 
     this.#listeners.get(event)?.add(listener)
     return this

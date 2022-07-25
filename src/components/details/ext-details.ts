@@ -1,5 +1,5 @@
 import '../card/ext-card.js'
-import { css, html } from 'lithen-tag-functions'
+import { css, raw } from 'lithen-tag-functions'
 import { ExpenseTrackerElement } from '../../expense-tracker-element.js'
 import { generateChartData } from '../../services/generate-chart-data.js'
 import { doughnutChart } from '../chart/doughnut-chart.js'
@@ -27,7 +27,7 @@ class ExtDetails extends ExpenseTrackerElement {
     const chartCanvas = this.select<HTMLCanvasElement>('div[chart] > canvas')!
     this.#chart = doughnutChart(chartCanvas, chartData)
 
-    new TransactionStore().on('add', this.#update)
+    new TransactionStore().on('change', this.#update)
   }
 
   #update = (transaction: Transaction) => {
@@ -43,6 +43,22 @@ class ExtDetails extends ExpenseTrackerElement {
 
   styling() {
     return css`
+      div[slot=header] {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+
+      div[slot=header] h3 {
+        font-size: 1.3rem;
+        font-weight: normal;
+      }
+
+      p[total-amount] {
+        font-size: 1.3rem;
+        color: #555;
+      }
+
       div[chart] {
         width: 250px;
         height: 250px;
@@ -54,10 +70,12 @@ class ExtDetails extends ExpenseTrackerElement {
   render() {
     const { totalAmount } = generateChartData(this.title)
 
-    return html`
+    return raw`
       <ext-card class="${this.title.toLowerCase()}">
-        <p slot="header">${this.title}</p>
-        <p total-amount>$${totalAmount.toString()}</p>
+        <div slot="header">
+          <h3>${this.title}</h3>
+          <p total-amount>$${totalAmount.toString()}</p>
+        </div>
         <div chart>
           <canvas></canvas>
         </div>
