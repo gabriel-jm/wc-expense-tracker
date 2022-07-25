@@ -1,0 +1,19 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(./src/assets/income-and-expenses-illustration.jpg)
+  ;
+  background-size: cover;
+  font-family: sans-serif;
+  color: #151515;
+}
+
+input, textarea, select {
+  color: #151515;
+}

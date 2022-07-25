@@ -1,0 +1,69 @@
+import '../card/ext-card.js'
+import { css, html } from 'lithen-tag-functions'
+import { ExpenseTrackerElement } from '../../expense-tracker-element.js'
+import { generateChartData } from '../../services/generate-chart-data.js'
+import { doughnutChart } from '../chart/doughnut-chart.js'
+import { Transaction, TransactionStore } from '../../stores/transactions-store.js'
+import { Chart } from 'chart.js'
+
+class ExtDetails extends ExpenseTrackerElement {
+  #chart!: Chart
+
+  constructor() {
+    super()
+    this.init()
+  }
+  
+  get title() {
+    return this.getAttribute('title') ?? ''
+  }
+
+  set title(value) {
+    this.setAttribute('title', value)
+  }
+
+  init() {
+    const { chartData } = generateChartData(this.title)
+    const chartCanvas = this.select<HTMLCanvasElement>('div[chart] > canvas')!
+    this.#chart = doughnutChart(chartCanvas, chartData)
+
+    new TransactionStore().on('add', this.#update)
+  }
+
+  #update = (transaction: Transaction) => {
+    if (transaction.type !== this.title) return
+
+    const { totalAmount, chartData } = generateChartData(this.title)
+
+    this.#chart.data = chartData
+    this.#chart.update()
+
+    this.select('p[total-amount]')!.textContent = `$${totalAmount}`
+  }
+
+  styling() {
+    return css`
+      div[chart] {
+        width: 250px;
+        height: 250px;
+        margin: auto;
+      }
+    `
+  }
+
+  render() {
+    const { totalAmount } = generateChartData(this.title)
+
+    return html`
+      <ext-card class="${this.title.toLowerCase()}">
+        <p slot="header">${this.title}</p>
+        <p total-amount>$${totalAmount.toString()}</p>
+        <div chart>
+          <canvas></canvas>
+        </div>
+      </ext-card>
+    `
+  }
+}
+
+customElements.define('ext-details', ExtDetails)
