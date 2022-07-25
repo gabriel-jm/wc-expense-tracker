@@ -19,12 +19,14 @@ export class EventEmitter<T = unknown> {
     return this
   }
 
-  async emit(event: string, value: T) {
-    for (const listener of this.#listeners.get(event)!.values()) {
-      const possiblePromise = listener(value)
-
-      if (possiblePromise instanceof Promise) {
-        await possiblePromise
+  async emit(events: string | string[], value: T) {    
+    for (const event of [events].flat()) {
+      for (const listener of this.#listeners.get(event)!.values()) {
+        const possiblePromise = listener(value)
+  
+        if (possiblePromise instanceof Promise) {
+          await possiblePromise
+        }
       }
     }
   }

@@ -10,11 +10,12 @@ export interface Transaction {
 
 export class TransactionStore extends EventEmitter<Transaction> {
   static #instance: TransactionStore
+  totalAmount = 0
   transactions: Set<Transaction> = new Set()
 
   constructor() {
     if (!TransactionStore.#instance) {
-      super('add', 'delete')
+      super('change', 'add', 'delete')
       TransactionStore.#instance = this
     }
 
@@ -27,7 +28,16 @@ export class TransactionStore extends EventEmitter<Transaction> {
 
   add(transaction: Transaction) {
     this.transactions.add(transaction)
-    this.emit('add', transaction)
+
+    if (transaction.type === 'Income') {
+      this.totalAmount += transaction.amount
+    }
+
+    if (transaction.type === 'Expense') {
+      this.totalAmount -= transaction.amount
+    }
+
+    this.emit(['add', 'change'], transaction)
   }
 
   delete(id: string) {
@@ -37,7 +47,15 @@ export class TransactionStore extends EventEmitter<Transaction> {
 
     if (!transaction) return
 
+    if (transaction.type === 'Income') {
+      this.totalAmount -= transaction.amount
+    }
+
+    if (transaction.type === 'Expense') {
+      this.totalAmount += transaction.amount
+    }
+
     this.transactions.delete(transaction)
-    this.emit('delete', transaction)
+    this.emit(['delete', 'change'], transaction)
   }
 }
