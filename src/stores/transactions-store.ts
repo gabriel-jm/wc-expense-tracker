@@ -1,3 +1,4 @@
+import { TransactionService } from '../services/transactions-service.js'
 import { EventEmitter } from './event-emitter.js'
 
 export interface Transaction {
@@ -12,14 +13,34 @@ export class TransactionStore extends EventEmitter<Transaction> {
   static #instance: TransactionStore
   totalAmount = 0
   transactions: Set<Transaction> = new Set()
+  
+  #transactionService = new TransactionService()
 
-  constructor() {
+  constructor(transactions?: Transaction[]) {
     if (!TransactionStore.#instance) {
       super('change', 'add', 'delete')
+
+      this.#setInitialValue(transactions)
       TransactionStore.#instance = this
     }
 
     return TransactionStore.#instance
+  }
+
+  #setInitialValue(transactions?: Transaction[]) {
+    if (transactions) {
+      this.transactions = new Set(transactions)
+
+      for (const transaction of transactions) {
+        if (transaction.type === 'Income') {
+          this.totalAmount += transaction.amount
+        }
+    
+        if (transaction.type === 'Expense') {
+          this.totalAmount -= transaction.amount
+        }
+      }
+    }
   }
 
   getAll() {
@@ -37,6 +58,7 @@ export class TransactionStore extends EventEmitter<Transaction> {
       this.totalAmount -= transaction.amount
     }
 
+    this.#transactionService.save(this.getAll())
     this.emit(['add', 'change'], transaction)
   }
 
@@ -56,6 +78,8 @@ export class TransactionStore extends EventEmitter<Transaction> {
     }
 
     this.transactions.delete(transaction)
+
+    this.#transactionService.save(this.getAll())
     this.emit(['delete', 'change'], transaction)
   }
 }

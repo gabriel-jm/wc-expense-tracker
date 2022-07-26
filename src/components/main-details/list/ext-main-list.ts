@@ -28,7 +28,7 @@ class ExtMainList extends ExpenseTrackerElement {
       )
   }
   
-  #createTransactionItem(transaction: Transaction) {
+  #createTransactionItem = (transaction: Transaction) => {
     return html`
       <li class="list-item" key-id="${transaction.id}">
         <div class="${transaction.type.toLowerCase()}">
@@ -43,9 +43,9 @@ class ExtMainList extends ExpenseTrackerElement {
         </div>
 
         <button
-          on-click=${
-            () => this.#transactionStore.delete(transaction.id)
-          }
+          on-click=${() => {
+            this.#transactionStore.delete(transaction.id)
+          }}
         >
           ${trashIcon()}
         </button>

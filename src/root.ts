@@ -2,8 +2,15 @@ import './components/details/ext-details.js'
 import './components/main-details/ext-main-details.js'
 import { css, raw } from 'lithen-tag-functions'
 import { ExpenseTrackerElement } from './expense-tracker-element.js'
+import { TransactionService } from './services/transactions-service.js'
+import { TransactionStore } from './stores/transactions-store.js'
 
 class ExtRoot extends ExpenseTrackerElement {
+  static {
+    const savedTransactions = new TransactionService().getAll()
+    new TransactionStore(savedTransactions)
+  }
+
   styling() {
     return css`
       :host {

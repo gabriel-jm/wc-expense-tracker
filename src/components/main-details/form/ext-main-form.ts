@@ -80,7 +80,7 @@ class ExtMainForm extends ExpenseTrackerElement {
       <form is="ext-form" on-submit=${onSubmit}>
         <label>
           <span>Type</span>
-          <select name="type" on-change=${onCategoryChange}>
+          <select name="type" required on-change=${onCategoryChange}>
             <option value="Income">Income</option>
             <option value="Expense">Expense</option>
           </select>
@@ -88,19 +88,19 @@ class ExtMainForm extends ExpenseTrackerElement {
 
         <label>
           <span>Category</span>
-          <select name="category">
+          <select name="category" required>
             ${incomeCategoryOptions}
           </select>
         </label>
 
         <label>
           <span>Amount</span>
-          <input type="number" name="amount" min="0" />
+          <input type="number" name="amount" required min="0" />
         </label>
 
         <label>
           <span>Date</span>
-          <input type="date" name="date" />
+          <input type="date" name="date" required />
         </label>
 
         <button>Create</button>
