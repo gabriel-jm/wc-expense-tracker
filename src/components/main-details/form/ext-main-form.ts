@@ -63,6 +63,8 @@ class ExtMainForm extends ExpenseTrackerElement {
         id: crypto.randomUUID(),
         ...formData
       })
+
+      form.reset()
     }
 
     const onCategoryChange = (event: Event) => {

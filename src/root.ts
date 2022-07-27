@@ -6,11 +6,6 @@ import { TransactionService } from './services/transactions-service.js'
 import { TransactionStore } from './stores/transactions-store.js'
 
 class ExtRoot extends ExpenseTrackerElement {
-  static {
-    const savedTransactions = new TransactionService().getAll()
-    new TransactionStore(savedTransactions)
-  }
-
   styling() {
     return css`
       :host {
@@ -26,6 +21,9 @@ class ExtRoot extends ExpenseTrackerElement {
   }
   
   render() {
+    const savedTransactions = new TransactionService().getAll()
+    new TransactionStore(savedTransactions)
+
     return raw`
       <ext-details title="Income" />
       <ext-main-details />
